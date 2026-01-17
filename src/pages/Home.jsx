@@ -2,12 +2,13 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../services/supabase'
 import styles from './Home.module.css'
 import ContactModal from '../components/ContactModal'
-import { Github, Linkedin, Mail, ExternalLink, Code2, Database, Cloud, Terminal } from 'lucide-react'
+import { Github, Linkedin, Mail, ExternalLink, Code2, Database, Cloud, Terminal, Menu, X } from 'lucide-react'
 
 export default function Home() {
   const [projects, setProjects] = useState([])
   const [profile, setProfile] = useState(null)
   const [isContactOpen, setIsContactOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -43,18 +44,31 @@ export default function Home() {
       {/* Navigation */}
       <nav className={styles.nav}>
         <div className={styles.logo}>{profile?.full_name || 'YuranPorto'}</div>
-        <div className={styles.navLinks}>
-          <a href="#about" className={styles.navLink}>Sobre</a>
-          <a href="#skills" className={styles.navLink}>Skills</a>
-          <a href="#projects" className={styles.navLink}>Projetos</a>
-        </div>
+        
+        {/* Mobile Menu Toggle */}
         <button 
-          onClick={() => setIsContactOpen(true)}
-          className={styles.ctaBtn}
-          style={{border: 'none', cursor: 'pointer', fontFamily: 'inherit'}}
+          className={styles.menuToggle} 
+          onClick={() => setIsMenuOpen(!isMenuOpen)}
         >
-          Contato
+          {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
+
+        <div className={`${styles.navLinks} ${isMenuOpen ? styles.navLinksOpen : ''}`}>
+          <a href="#about" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Sobre</a>
+          <a href="#skills" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Skills</a>
+          <a href="#projects" className={styles.navLink} onClick={() => setIsMenuOpen(false)}>Projetos</a>
+          
+          <button 
+            onClick={() => {
+              setIsContactOpen(true);
+              setIsMenuOpen(false);
+            }}
+            className={styles.ctaBtn}
+            style={{border: 'none', cursor: 'pointer', fontFamily: 'inherit'}}
+          >
+            Contato
+          </button>
+        </div>
       </nav>
 
       {/* Hero Section */}

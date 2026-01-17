@@ -296,6 +296,21 @@
   .logo {
     margin-bottom: 1rem;
   }
+
+  .main {
+    padding: 1.5rem;
+  }
+
+  .pageHeader {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .primaryBtn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 /* Form Styles */
