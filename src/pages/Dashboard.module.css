@@ -118,7 +118,7 @@
 .pageHeader {
   display: flex;
   justify-content: space-between;
-  align-items: flex-start;
+  align-items: center;
   margin-bottom: 2.5rem;
 }
 
@@ -135,7 +135,9 @@
 }
 
 .primaryBtn {
-  display: flex;
+  display: inline-flex;
+  width: fit-content;
+  flex-shrink: 0;
   align-items: center;
   gap: 0.5rem;
   background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
@@ -293,5 +295,64 @@
 
   .logo {
     margin-bottom: 1rem;
+  }
+}
+
+/* Form Styles */
+.formCard {
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #cbd5e1;
+}
+
+.inputGroup input,
+.inputGroup textarea {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-family: inherit;
+  resize: vertical;
+  transition: border-color 0.2s;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.sectionDivider {
+  margin: 2rem 0 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #334155;
+  color: #fff;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 640px) {
+  .row {
+    grid-template-columns: 1fr;
   }
 }
