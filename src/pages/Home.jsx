@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../services/supabase'
 import styles from './Home.module.css'
+import ContactModal from '../components/ContactModal'
 import { Github, Linkedin, Mail, ExternalLink, Code2, Database, Cloud, Terminal } from 'lucide-react'
 
 export default function Home() {
   const [projects, setProjects] = useState([])
   const [profile, setProfile] = useState(null)
+  const [isContactOpen, setIsContactOpen] = useState(false)
 
   useEffect(() => {
     fetchData()
@@ -46,12 +48,13 @@ export default function Home() {
           <a href="#skills" className={styles.navLink}>Skills</a>
           <a href="#projects" className={styles.navLink}>Projetos</a>
         </div>
-        <a 
-          href={profile?.email ? `mailto:${profile.email}` : '#contact'} 
+        <button 
+          onClick={() => setIsContactOpen(true)}
           className={styles.ctaBtn}
+          style={{border: 'none', cursor: 'pointer', fontFamily: 'inherit'}}
         >
           Contato
-        </a>
+        </button>
       </nav>
 
       {/* Hero Section */}
@@ -78,9 +81,13 @@ export default function Home() {
               </a>
             )}
             {profile?.email && (
-              <a href={`mailto:${profile.email}`} className={styles.socialIcon}>
+              <button 
+                onClick={() => setIsContactOpen(true)}
+                className={styles.socialIcon}
+                style={{background: 'none', border: 'none', cursor: 'pointer', padding: 0}}
+              >
                 <Mail size={28} />
-              </a>
+              </button>
             )}
           </div>
         </div>
@@ -163,6 +170,8 @@ export default function Home() {
       <footer style={{textAlign: 'center', padding: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)'}}>
         <p style={{color: '#64748b'}}>© 2024 Yuran Porto. Todos os direitos reservados.</p>
       </footer>
+
+      {isContactOpen && <ContactModal onClose={() => setIsContactOpen(false)} />}
     </div>
   )
 }
