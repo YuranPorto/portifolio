@@ -6,13 +6,9 @@ import { CONTACT_CONFIG } from '../config/contact'
 import { 
   ArrowLeft, 
   MessageCircle, 
-  Copy, 
-  Check, 
   Sparkles, 
-  ExternalLink,
-  ShieldAlert,
-  Send,
-  Mail
+  ShieldAlert, 
+  Mail 
 } from 'lucide-react'
 
 export default function Briefing() {
@@ -31,18 +27,22 @@ export default function Briefing() {
 
   const t = translations[currentLang]?.briefing || translations.pt.briefing
 
+  const otherLabel = currentLang === 'en' ? 'Other' : 'Outro'
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
     projectType: t.fields.projectTypeOptions[0],
+    customProjectType: '',
     stage: t.fields.stageOptions[0],
+    customStage: '',
     deadline: t.fields.deadlineOptions[1],
+    customDeadline: '',
     budget: t.fields.budgetOptions[1],
+    customBudget: '',
     details: ''
   })
 
-  const [copied, setCopied] = useState(false)
-  const [submitted, setSubmitted] = useState(false)
   const [validationError, setValidationError] = useState('')
 
   // Handle language switch while preserving form data
@@ -51,17 +51,46 @@ export default function Briefing() {
     navigate(newLang === 'en' ? '/en/briefing' : '/pt/briefing')
   }
 
-  // Construct formatted WhatsApp message
+  // Resolve values (either standard option or custom text)
+  const resolvedProjectType = useMemo(() => {
+    if (formData.projectType === 'Outro' || formData.projectType === 'Other') {
+      return formData.customProjectType.trim() || otherLabel
+    }
+    return formData.projectType
+  }, [formData.projectType, formData.customProjectType, otherLabel])
+
+  const resolvedStage = useMemo(() => {
+    if (formData.stage === 'Outro' || formData.stage === 'Other') {
+      return formData.customStage.trim() || otherLabel
+    }
+    return formData.stage
+  }, [formData.stage, formData.customStage, otherLabel])
+
+  const resolvedDeadline = useMemo(() => {
+    if (formData.deadline === 'Outro' || formData.deadline === 'Other') {
+      return formData.customDeadline.trim() || otherLabel
+    }
+    return formData.deadline
+  }, [formData.deadline, formData.customDeadline, otherLabel])
+
+  const resolvedBudget = useMemo(() => {
+    if (formData.budget === 'Outro' || formData.budget === 'Other') {
+      return formData.customBudget.trim() || otherLabel
+    }
+    return formData.budget
+  }, [formData.budget, formData.customBudget, otherLabel])
+
+  // Construct formatted WhatsApp and Email message
   const formattedMessage = useMemo(() => {
     const greeting = t.greeting || 'Olá Yuran! Preenchi o briefing do meu projeto no seu site:'
     const lines = [
       `👋 *${greeting}*`,
       '',
-      `👤 *${currentLang === 'en' ? 'Name / Company' : 'Nome / Empresa'}:* ${formData.name || (currentLang === 'en' ? '[Not specified]' : '[Não informado]')}`,
-      `🎯 *${currentLang === 'en' ? 'Project Type' : 'Tipo de Projeto'}:* ${formData.projectType}`,
-      `📋 *${currentLang === 'en' ? 'Current Stage' : 'Estágio Atual'}:* ${formData.stage}`,
-      `⏱️ *${currentLang === 'en' ? 'Target Timeline' : 'Prazo Desejado'}:* ${formData.deadline}`,
-      `💰 *${currentLang === 'en' ? 'Planned Investment' : 'Investimento Planejado'}:* ${formData.budget}`
+      `👤 *${currentLang === 'en' ? 'Name / Company' : 'Nome / Empresa'}:* ${formData.name.trim() || (currentLang === 'en' ? '[Not specified]' : '[Não informado]')}`,
+      `🎯 *${currentLang === 'en' ? 'Project Type' : 'Tipo de Projeto'}:* ${resolvedProjectType}`,
+      `📋 *${currentLang === 'en' ? 'Current Stage' : 'Estágio Atual'}:* ${resolvedStage}`,
+      `⏱️ *${currentLang === 'en' ? 'Target Timeline' : 'Prazo Desejado'}:* ${resolvedDeadline}`,
+      `💰 *${currentLang === 'en' ? 'Planned Investment' : 'Investimento Planejado'}:* ${resolvedBudget}`
     ]
 
     if (formData.details.trim()) {
@@ -71,7 +100,7 @@ export default function Briefing() {
     lines.push('', currentLang === 'en' ? 'Looking forward to hearing your thoughts and next steps!' : 'Gostaria de saber como podemos iniciar!')
 
     return lines.join('\n')
-  }, [formData, currentLang, t.greeting])
+  }, [formData.name, formData.details, resolvedProjectType, resolvedStage, resolvedDeadline, resolvedBudget, currentLang, t.greeting])
 
   const whatsappUrl = useMemo(() => {
     const cleanNumber = CONTACT_CONFIG.whatsappNumber.replace(/\D/g, '')
@@ -80,7 +109,7 @@ export default function Briefing() {
 
   const mailtoBriefingUrl = useMemo(() => {
     const emailTo = CONTACT_CONFIG.contactEmail
-    const subject = `[Briefing ${currentLang.toUpperCase()}] ${formData.name || (currentLang === 'en' ? 'New Project' : 'Novo Projeto')}`
+    const subject = `[Briefing ${currentLang.toUpperCase()}] ${formData.name.trim() || (currentLang === 'en' ? 'New Project' : 'Novo Projeto')}`
     return `mailto:${encodeURIComponent(emailTo)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(formattedMessage)}`
   }, [formData.name, formattedMessage, currentLang])
 
@@ -88,22 +117,12 @@ export default function Briefing() {
     e.preventDefault()
     if (!formData.name.trim()) {
       setValidationError(currentLang === 'en' ? 'Please enter your name or company.' : 'Por favor, informe seu nome ou empresa.')
+      window.scrollTo({ top: 120, behavior: 'smooth' })
       return
     }
 
     setValidationError('')
-    setSubmitted(true)
     window.open(whatsappUrl, '_blank')
-  }
-
-  const handleCopy = async () => {
-    try {
-      await navigator.clipboard.writeText(formattedMessage)
-      setCopied(true)
-      setTimeout(() => setCopied(false), 2500)
-    } catch (err) {
-      console.warn('Clipboard write failed:', err)
-    }
   }
 
   return (
@@ -149,8 +168,8 @@ export default function Briefing() {
           <p className={styles.subtitle}>{t.subtitle}</p>
         </div>
 
-        <div className={styles.contentGrid}>
-          {/* Form Side */}
+        {/* Centralized Form Container */}
+        <div className={styles.formContainer}>
           <div className={styles.formCard}>
             <form onSubmit={handleSubmit} className={styles.form}>
               {validationError && (
@@ -194,6 +213,16 @@ export default function Briefing() {
                     </button>
                   ))}
                 </div>
+                {(formData.projectType === 'Outro' || formData.projectType === 'Other') && (
+                  <input
+                    type="text"
+                    value={formData.customProjectType}
+                    onChange={(e) => setFormData({ ...formData, customProjectType: e.target.value })}
+                    placeholder={t.fields.otherPlaceholder || 'Digite sua resposta...'}
+                    className={styles.customTextInput}
+                    autoFocus
+                  />
+                )}
               </div>
 
               {/* Step 3: Current Stage */}
@@ -211,6 +240,16 @@ export default function Briefing() {
                     </button>
                   ))}
                 </div>
+                {(formData.stage === 'Outro' || formData.stage === 'Other') && (
+                  <input
+                    type="text"
+                    value={formData.customStage}
+                    onChange={(e) => setFormData({ ...formData, customStage: e.target.value })}
+                    placeholder={t.fields.otherPlaceholder || 'Digite sua resposta...'}
+                    className={styles.customTextInput}
+                    autoFocus
+                  />
+                )}
               </div>
 
               {/* Step 4: Deadline */}
@@ -228,6 +267,16 @@ export default function Briefing() {
                     </button>
                   ))}
                 </div>
+                {(formData.deadline === 'Outro' || formData.deadline === 'Other') && (
+                  <input
+                    type="text"
+                    value={formData.customDeadline}
+                    onChange={(e) => setFormData({ ...formData, customDeadline: e.target.value })}
+                    placeholder={t.fields.otherPlaceholder || 'Digite sua resposta...'}
+                    className={styles.customTextInput}
+                    autoFocus
+                  />
+                )}
               </div>
 
               {/* Step 5: Budget */}
@@ -245,6 +294,16 @@ export default function Briefing() {
                     </button>
                   ))}
                 </div>
+                {(formData.budget === 'Outro' || formData.budget === 'Other') && (
+                  <input
+                    type="text"
+                    value={formData.customBudget}
+                    onChange={(e) => setFormData({ ...formData, customBudget: e.target.value })}
+                    placeholder={t.fields.otherPlaceholder || 'Digite sua resposta...'}
+                    className={styles.customTextInput}
+                    autoFocus
+                  />
+                )}
               </div>
 
               {/* Step 6: Details */}
@@ -262,7 +321,7 @@ export default function Briefing() {
                 />
               </div>
 
-              {/* Submit CTA */}
+              {/* Action Buttons */}
               <div className={styles.submitRow}>
                 <button 
                   type="submit" 
@@ -283,53 +342,8 @@ export default function Briefing() {
               </div>
             </form>
           </div>
-
-          {/* WhatsApp Preview Side */}
-          <div className={styles.previewCard}>
-            <div className={styles.previewHeader}>
-              <div className={styles.previewHeaderUser}>
-                <div className={styles.previewAvatar}>YP</div>
-                <div>
-                  <div className={styles.previewName}>Yuran Porto</div>
-                  <div className={styles.previewStatus}>{currentLang === 'en' ? 'Online • Fast Reply' : 'Online • Resposta rápida'}</div>
-                </div>
-              </div>
-
-              <button 
-                type="button" 
-                onClick={handleCopy}
-                className={styles.copyBtn}
-                title={t.copyBtn}
-              >
-                {copied ? <Check size={16} className={styles.copyIconCheck} /> : <Copy size={16} />}
-                <span>{copied ? t.copied : t.copyBtn}</span>
-              </button>
-            </div>
-
-            <div className={styles.previewBody}>
-              <span className={styles.previewNotice}>{t.previewTitle}</span>
-              
-              <div className={styles.whatsappBubble}>
-                <pre className={styles.bubbleText}>{formattedMessage}</pre>
-                <span className={styles.bubbleTime}>{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} ✓✓</span>
-              </div>
-            </div>
-
-            <div className={styles.previewFooter}>
-              <a 
-                href={whatsappUrl} 
-                target="_blank" 
-                rel="noreferrer" 
-                className={styles.directLink}
-              >
-                <span>{currentLang === 'en' ? 'Open WhatsApp Directly' : 'Abrir WhatsApp Diretamente'}</span>
-                <ExternalLink size={14} />
-              </a>
-            </div>
-          </div>
         </div>
       </main>
     </div>
   )
 }
-

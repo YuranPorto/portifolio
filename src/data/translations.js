@@ -203,27 +203,31 @@ export const translations = {
           'Página de Vendas de Alta Conversão',
           'Redesign & Aceleração de Performance',
           'Integrações de APIs & Automações',
-          'Outro / Escopo Personalizado'
+          'Outro'
         ],
         stage: 'Qual o estágio atual do projeto?',
         stageOptions: [
           'Tenho design/copy prontos (só preciso do desenvolvimento)',
           'Preciso de tudo do zero (estratégia, design e código)',
-          'Já tenho uma página no ar que precisa ser recriada/melhorada'
+          'Já tenho uma página no ar que precisa ser recriada/melhorada',
+          'Outro'
         ],
         deadline: 'Prazo desejado para entrega',
         deadlineOptions: [
           'Urgente (em até 10 dias)',
           'Médio prazo (2 a 3 semanas)',
-          'Flexível / Planejando para o próximo mês'
+          'Flexível / Planejando para o próximo mês',
+          'Outro'
         ],
         budget: 'Faixa de investimento planejada',
         budgetOptions: [
           'Até R$ 2.500',
           'R$ 2.500 a R$ 5.000',
           'Acima de R$ 5.000',
-          'A combinar na proposta'
+          'A combinar na proposta',
+          'Outro'
         ],
+        otherPlaceholder: 'Digite sua resposta personalizada...',
         details: 'Resumo do projeto e links de referência (opcional)',
         detailsPlaceholder: 'Ex: Links de sites que você gosta, sua página atual ou objetivos principais...',
       },
@@ -438,27 +442,31 @@ export const translations = {
           'High-Ticket Direct Sales Page',
           'Redesign & Performance Re-engineering',
           'API Integrations & Custom Webhooks',
-          'Other / Custom Scope'
+          'Other'
         ],
         stage: 'Current Project Stage',
         stageOptions: [
           'I have design/copy ready (need clean code only)',
           'Need end-to-end delivery (strategy, UI/UX & code)',
-          'Existing live page that needs a complete overhaul'
+          'Existing live page that needs a complete overhaul',
+          'Other'
         ],
         deadline: 'Target Launch Timeline',
         deadlineOptions: [
           'Urgent (within 10 days)',
           'Standard (2 to 3 weeks)',
-          'Flexible / Planning next month'
+          'Flexible / Planning next month',
+          'Other'
         ],
         budget: 'Planned Investment Tier',
         budgetOptions: [
           'Up to $600',
           '$600 to $1,500',
           '$1,500+',
-          'To be determined based on proposal'
+          'To be determined based on proposal',
+          'Other'
         ],
+        otherPlaceholder: 'Type your custom answer...',
         details: 'Product summary & reference links (optional)',
         detailsPlaceholder: 'e.g., Competitor sites you admire, your current site, or key conversion goals...',
       },
