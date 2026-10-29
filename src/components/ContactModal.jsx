@@ -1,9 +1,13 @@
 import { useState } from 'react'
 import { createPortal } from 'react-dom'
 import styles from './ContactModal.module.css'
-import { X, Send, Loader2, CheckCircle2 } from 'lucide-react'
+import { X, Send, Loader2, CheckCircle2, Mail, ExternalLink } from 'lucide-react'
+import { translations } from '../data/translations'
+import { CONTACT_CONFIG } from '../config/contact'
 
-export default function ContactModal({ onClose }) {
+export default function ContactModal({ onClose, lang = 'pt' }) {
+  const t = translations[lang]?.contactModal || translations.pt.contactModal
+
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -16,21 +20,33 @@ export default function ContactModal({ onClose }) {
     setStatus('sending')
 
     try {
-      const response = await fetch('/.netlify/functions/send-email', {
+      // Approach without SMTP: Direct JSON submission to FormSubmit endpoint
+      const response = await fetch(`https://formsubmit.co/ajax/${encodeURIComponent(CONTACT_CONFIG.contactEmail)}`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          message: formData.message,
+          _subject: `[Portfólio ${lang.toUpperCase()}] Nova Proposta: ${formData.name}`,
+          _template: 'table',
+          _captcha: 'false'
+        })
       })
 
-      if (!response.ok) throw new Error('Failed to send email')
+      if (!response.ok) {
+        throw new Error('Falha no envio do formulário')
+      }
 
       setStatus('success')
-      // Auto close after success
       setTimeout(() => {
         onClose()
-      }, 3000)
+      }, 3500)
     } catch (error) {
-      console.error(error)
+      console.warn('Form submission fallback:', error)
       setStatus('error')
     }
   }
@@ -39,68 +55,93 @@ export default function ContactModal({ onClose }) {
     setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
+  // Fallback mailto link in case network blocks or user prefers native email client
+  const mailtoUrl = `mailto:${CONTACT_CONFIG.contactEmail}?subject=${encodeURIComponent(
+    `[Projeto ${lang.toUpperCase()}] Contato de ${formData.name || 'Cliente'}`
+  )}&body=${encodeURIComponent(
+    `Nome: ${formData.name}\nEmail: ${formData.email}\n\nDetalhes do Projeto:\n${formData.message}`
+  )}`
+
   return createPortal(
-    <div className={styles.overlay}>
-      <div className={styles.modal}>
+    <div className={styles.overlay} onClick={(e) => e.target === e.currentTarget && onClose()}>
+      <div className={styles.modal} role="dialog" aria-modal="true">
         <header className={styles.header}>
-          <h2>Entre em Contato</h2>
-          <button onClick={onClose} className={styles.closeBtn}>
-            <X size={24} />
+          <div>
+            <span className={styles.headerBadge}>
+              {lang === 'en' ? 'Direct Message (Zero Spam)' : 'Mensagem Direta'}
+            </span>
+            <h2 className={styles.modalTitle}>{t.title}</h2>
+          </div>
+          <button onClick={onClose} className={styles.closeBtn} aria-label={t.close}>
+            <X size={20} />
           </button>
         </header>
 
         {status === 'success' ? (
           <div className={styles.successMessage}>
-            <CheckCircle2 size={48} style={{margin: '0 auto 1rem', display: 'block'}} />
-            <h3>Mensagem Enviada!</h3>
-            <p>Obrigado pelo contato. Responderei em breve.</p>
+            <div className={styles.successIconWrapper}>
+              <CheckCircle2 size={36} />
+            </div>
+            <h3>{t.successTitle}</h3>
+            <p>{t.successDesc}</p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className={styles.form}>
             {status === 'error' && (
               <div className={styles.errorMessage}>
-                Erro ao enviar mensagem. Por favor, tente novamente ou use o e-mail direto.
+                <p style={{ margin: '0 0 0.5rem 0' }}>{t.error}</p>
+                <a 
+                  href={mailtoUrl}
+                  className={styles.fallbackMailto}
+                >
+                  <Mail size={16} />
+                  <span>{lang === 'en' ? 'Click here to open your Email app' : 'Clique aqui para abrir no seu app de E-mail'}</span>
+                  <ExternalLink size={14} />
+                </a>
               </div>
             )}
 
             <div className={styles.inputGroup}>
-              <label>Seu Nome</label>
+              <label htmlFor="contact-name">{t.nameLabel}</label>
               <input 
+                id="contact-name"
                 name="name" 
                 value={formData.name} 
                 onChange={handleChange} 
                 required 
-                placeholder="Ex: João Silva"
+                placeholder={t.namePlaceholder}
               />
             </div>
 
             <div className={styles.inputGroup}>
-              <label>Seu E-mail</label>
+              <label htmlFor="contact-email">{t.emailLabel}</label>
               <input 
+                id="contact-email"
                 type="email"
                 name="email" 
                 value={formData.email} 
                 onChange={handleChange} 
                 required 
-                placeholder="exemplo@email.com"
+                placeholder={t.emailPlaceholder}
               />
             </div>
 
             <div className={styles.inputGroup}>
-              <label>Mensagem</label>
+              <label htmlFor="contact-message">{t.messageLabel}</label>
               <textarea 
+                id="contact-message"
                 name="message" 
                 value={formData.message} 
                 onChange={handleChange} 
                 required 
                 rows={4}
-                placeholder="Olá Yuran, gostaria de falar sobre um projeto..."
+                placeholder={t.messagePlaceholder}
               />
             </div>
 
             <div className={styles.footer}>
               <button type="button" onClick={onClose} className={styles.cancelBtn}>
-                Cancelar
+                {t.close}
               </button>
               <button 
                 type="submit" 
@@ -108,9 +149,9 @@ export default function ContactModal({ onClose }) {
                 className={styles.sendBtn}
               >
                 {status === 'sending' ? (
-                  <><Loader2 className={styles.spin} size={18} /> Enviando...</>
+                  <><Loader2 className={styles.spin} size={16} /> {t.sendingBtn}</>
                 ) : (
-                  <><Send size={18} /> Enviar Mensagem</>
+                  <><Send size={16} /> {t.submitBtn}</>
                 )}
               </button>
             </div>

@@ -1,52 +1,64 @@
 .overlay {
   position: fixed;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(15, 23, 42, 0.8);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   animation: fadeIn 0.2s ease-out;
+  padding: 1rem;
 }
 
 .modal {
-  background: #1e293b;
+  background: #111114;
   width: 100%;
-  max-width: 500px;
-  border-radius: 16px;
+  max-width: 520px;
+  border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.8), 0 0 0 1px rgba(255, 255, 255, 0.05);
   overflow: hidden;
-  animation: slideUp 0.3s ease-out;
-  margin: 1rem;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .header {
-  padding: 1.5rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  padding: 1.5rem 1.75rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
+  background: rgba(255, 255, 255, 0.02);
 }
 
-.header h2 {
+.headerBadge {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #10b981;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  margin-bottom: 0.35rem;
+}
+
+.modalTitle {
   margin: 0;
-  font-size: 1.25rem;
-  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #f4f4f5;
+  letter-spacing: -0.02em;
 }
 
 .closeBtn {
-  background: transparent;
-  border: none;
-  color: #94a3b8;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
   cursor: pointer;
-  padding: 0.5rem;
-  border-radius: 8px;
-  transition: all 0.2s;
+  padding: 0.45rem;
+  border-radius: 10px;
+  transition: all 0.15s ease;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -55,10 +67,11 @@
 .closeBtn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: #fff;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .form {
-  padding: 1.5rem;
+  padding: 1.75rem;
 }
 
 .inputGroup {
@@ -67,97 +80,144 @@
 
 .inputGroup label {
   display: block;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  margin-bottom: 0.45rem;
+  font-size: 0.85rem;
   font-weight: 500;
-  color: #cbd5e1;
+  color: #d4d4d8;
+  letter-spacing: -0.01em;
 }
 
 .inputGroup input,
 .inputGroup textarea {
   width: 100%;
-  background-color: #0f172a;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  padding: 0.75rem 1rem;
-  color: #fff;
+  background-color: #09090b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 0.8rem 1rem;
+  color: #f4f4f5;
   font-family: inherit;
   font-size: 0.95rem;
-  transition: border-color 0.2s;
-  resize: vertical;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
 }
 
 .inputGroup input:focus,
 .inputGroup textarea:focus {
   outline: none;
-  border-color: #6366f1;
+  border-color: #10b981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+}
+
+.inputGroup input::placeholder,
+.inputGroup textarea::placeholder {
+  color: #52525b;
 }
 
 .footer {
-  margin-top: 2rem;
+  margin-top: 1.75rem;
   display: flex;
   justify-content: flex-end;
-  gap: 1rem;
-}
-
-.sendBtn {
-  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-  color: white;
-  border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  transition: opacity 0.2s;
-}
-
-.sendBtn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
+  gap: 0.75rem;
 }
 
 .cancelBtn {
   background: transparent;
-  border: 1px solid #334155;
-  color: #e2e8f0;
-  padding: 0.75rem 1.5rem;
-  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #a1a1aa;
+  padding: 0.7rem 1.25rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.15s ease;
 }
 
 .cancelBtn:hover {
   background: rgba(255, 255, 255, 0.05);
+  color: #fff;
 }
 
-.successMessage {
-  padding: 2rem;
-  text-align: center;
-  color: #10b981;
+.sendBtn {
+  background: #10b981;
+  color: #042f1a;
+  border: none;
+  padding: 0.7rem 1.4rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.15s ease;
+}
+
+.sendBtn:hover:not(:disabled) {
+  background: #34d399;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.sendBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .errorMessage {
   background: rgba(239, 68, 68, 0.1);
   border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #fca5a5;
-  padding: 0.75rem;
-  border-radius: 8px;
+  color: #f87171;
+  padding: 0.85rem 1rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
   margin-bottom: 1.25rem;
-  font-size: 0.9rem;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.fallbackMailto {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: #34d399;
+  text-decoration: underline;
+  font-weight: 500;
+  margin-top: 0.35rem;
+  cursor: pointer;
 }
 
-@keyframes slideUp {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+.fallbackMailto:hover {
+  color: #6ee7b7;
+}
+
+.successMessage {
+  padding: 3rem 2rem;
+  text-align: center;
+}
+
+.successIconWrapper {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.25rem;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #10b981;
+}
+
+.successMessage h3 {
+  color: #fff;
+  font-size: 1.35rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.successMessage p {
+  color: #a1a1aa;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin: 0;
 }
 
 .spin {
@@ -167,4 +227,20 @@
 @keyframes spin {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
