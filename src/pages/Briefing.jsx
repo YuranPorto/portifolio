@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import styles from './Briefing.module.css'
 import { translations } from '../data/translations'
 import { CONTACT_CONFIG } from '../config/contact'
+import SEO from '../components/SEO'
 import { 
   ArrowLeft, 
   MessageCircle, 
@@ -127,6 +128,21 @@ export default function Briefing() {
 
   return (
     <div className={styles.container}>
+      {/* Briefing SEO */}
+      <SEO 
+        title={currentLang === 'en' 
+          ? 'Project Briefing & Quote Request | Yuran Porto' 
+          : 'Solicitar Orçamento & Briefing de Projeto | Yuran Porto'}
+        description={currentLang === 'en'
+          ? 'Submit your project requirements for a high-converting website or custom web software and get an immediate quote on WhatsApp.'
+          : 'Envie as especificações do seu projeto de site, landing page ou sistema web e receba uma estimativa rápida diretamente no WhatsApp.'}
+        keywords={currentLang === 'en'
+          ? 'hire web developer, website quote, get website estimate, project briefing, software engineering inquiry'
+          : 'orcamento criacao de site, quanto custa uma landing page, contratar desenvolvedor web, briefing projeto de site, desenvolvimento sob medida'}
+        canonical={currentLang === 'en' ? '/en/briefing' : '/briefing'}
+        lang={currentLang === 'en' ? 'en-US' : 'pt-BR'}
+      />
+
       {/* Top Bar */}
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>

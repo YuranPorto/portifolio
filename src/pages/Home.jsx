@@ -4,6 +4,7 @@ import { supabase } from '../services/supabase'
 import styles from './Home.module.css'
 import { translations } from '../data/translations'
 import { CONTACT_CONFIG } from '../config/contact'
+import SEO from '../components/SEO'
 import { 
   Github, 
   Linkedin, 
@@ -179,6 +180,21 @@ export default function Home() {
 
   return (
     <div className={styles.container}>
+      {/* Dynamic SEO Tags */}
+      <SEO 
+        title={currentLang === 'en' 
+          ? 'Yuran Porto | Fullstack Software Engineer & High-Converting Websites' 
+          : 'Yuran Porto | Desenvolvedor Fullstack & Criação de Sites e Landing Pages'}
+        description={currentLang === 'en'
+          ? 'Fullstack software engineer specialized in high-performance web applications and high-converting landing pages for businesses worldwide.'
+          : 'Desenvolvedor Fullstack e especialista em landing pages de alta conversão. Criação de sites rápidos, modernos e otimizados para atrair clientes para seu negócio.'}
+        keywords={currentLang === 'en'
+          ? 'fullstack developer, software engineer, react nodejs developer, custom web development, freelance programmer, landing page developer'
+          : 'desenvolvedor fullstack, criacao de sites, criar site para empresa, landing page de alta conversao, desenvolvedor react, desenvolvedor nodejs, programador web freelance, site para negocios, desenvolvedor software'}
+        canonical={currentLang === 'en' ? '/en' : '/'}
+        lang={currentLang === 'en' ? 'en-US' : 'pt-BR'}
+      />
+
       {/* Top Navbar */}
       <nav className={`${styles.nav} ${scrolled ? styles.navScrolled : ''}`}>
         <div className={styles.navInner}>

@@ -1,0 +1,9 @@
+# Robots.txt for https://yuranporto.com.br
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /login
+
+# Sitemaps
+Sitemap: https://yuranporto.com.br/sitemap.xml
+

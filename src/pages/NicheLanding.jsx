@@ -5,6 +5,7 @@ import { nicheLandingPages as defaultNichePages } from '../data/nicheLandingPage
 import { getNichePageBySlug } from '../services/pagesService'
 import { CONTACT_CONFIG } from '../config/contact'
 import { supabase } from '../services/supabase'
+import SEO from '../components/SEO'
 import { 
   ArrowLeft, 
   MessageCircle, 
@@ -144,8 +145,39 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
 
   if (!content) return null
 
+  const pageTitle = `${content.headlineStart} ${content.headlineHighlight} | Yuran Porto`
+  const pageKeywords = activeSlug === 'sites-para-oficinas'
+    ? (currentLang === 'en'
+        ? 'auto repair shop website, mechanic landing page, garage website design, automotive marketing'
+        : 'site para oficina mecanica, criacao de sites para oficinas, landing page oficina automotiva, site automotivo, clientes para oficina mecanica, agendamento mecanica whatsapp')
+    : `${content.title}, criacao de sites, landing page profissional`
+
+  const nicheJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    'name': pageTitle,
+    'description': content.subtitle,
+    'provider': {
+      '@type': 'Person',
+      'name': 'Yuran Porto',
+      'url': 'https://yuranporto.com.br'
+    },
+    'serviceType': 'Desenvolvimento de Sites e Landing Pages',
+    'areaServed': 'BR'
+  }
+
   return (
     <div className={styles.container}>
+      {/* Dynamic Niche SEO */}
+      <SEO 
+        title={pageTitle}
+        description={content.subtitle}
+        keywords={pageKeywords}
+        canonical={currentLang === 'en' ? `/en/${activeSlug}` : `/${activeSlug}`}
+        lang={currentLang === 'en' ? 'en-US' : 'pt-BR'}
+        jsonLd={nicheJsonLd}
+      />
+
       {/* Top Header / Navigation */}
       <header className={styles.topBar}>
         <div className={styles.topBarInner}>
