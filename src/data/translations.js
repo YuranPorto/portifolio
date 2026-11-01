@@ -119,17 +119,31 @@ export const translations = {
       ],
     },
     projects: {
-      tag: 'PORTFÓLIO',
-      title: 'Projetos e Trabalhos Selecionados',
-      subtitle: 'Uma seleção de landing pages, plataformas e sistemas desenvolvidos sob medida.',
+      tag: 'PORTFÓLIO & SOLUÇÕES',
+      title: 'Projetos e Apresentações Especializadas',
+      subtitle: 'Uma seleção de landing pages de alta conversão, portais e sistemas desenvolvidos sob medida para nichos estratégicos.',
+      filterAll: 'Todos',
       empty: 'Carregando projetos ou nenhum projeto publicado ainda.',
       viewLive: 'Visitar Site',
+      viewPresentation: 'Ver Apresentação',
       viewCode: 'Código Fonte',
       requestDemo: 'Ver Detalhes',
       demoProjects: [
         {
+          id: 'demo-workshop',
+          title: 'Site de Alta Conversão para Oficinas Mecânicas',
+          category: 'Oficinas & Automotivo',
+          description: 'Página especializada para centros automotivos com agendamento direto no WhatsApp, catálogo de serviços e rotas GPS integradas.',
+          image_url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1200&auto=format&fit=crop',
+          tech_stack: ['React', 'Vite', 'Google Maps', 'WhatsApp CAPI'],
+          niche_url: '/sites-para-oficinas',
+          live_url: '/sites-para-oficinas',
+          repo_url: '#'
+        },
+        {
           id: 'demo-1',
           title: 'Landing Page SaaS Analytics',
+          category: 'Startups & SaaS',
           description: 'Página de alta conversão para startup de dados, com preview interativo e tempo de abertura de 0.6s.',
           image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['React', 'Vite', 'Tailwind', 'Stripe'],
@@ -139,6 +153,7 @@ export const translations = {
         {
           id: 'demo-2',
           title: 'Funil de Vendas Fintech Global',
+          category: 'Fintech & Vendas',
           description: 'Página de vendas multimoeda otimizada para tráfego pago massivo com retenção máxima no mobile.',
           image_url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['React', 'Node.js', 'Webhooks', 'Meta CAPI'],
@@ -148,6 +163,7 @@ export const translations = {
         {
           id: 'demo-3',
           title: 'Portal de APIs & Nuvem Corporativa',
+          category: 'Engenharia & Back-end',
           description: 'Hub institucional de engenharia para desenvolvedores com arquitetura resiliente e testes de endpoint.',
           image_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['Node.js', 'PostgreSQL', 'Docker', 'AWS'],
@@ -358,17 +374,31 @@ export const translations = {
       ],
     },
     projects: {
-      tag: 'SELECTED WORK',
-      title: 'Recent Projects & Digital Products',
-      subtitle: 'A curated selection of high-performance landing pages, web applications, and backend systems.',
+      tag: 'PORTFOLIO & SOLUTIONS',
+      title: 'Selected Projects & Specialized Presentations',
+      subtitle: 'A curated selection of high-performance landing pages, specialized niche presentations, and scalable web platforms.',
+      filterAll: 'All',
       empty: 'Loading projects or no projects published yet.',
       viewLive: 'Live Demo',
+      viewPresentation: 'View Presentation',
       viewCode: 'Source Code',
       requestDemo: 'View Details',
       demoProjects: [
         {
+          id: 'demo-workshop',
+          title: 'High-Converting Website for Auto Repair Shops',
+          category: 'Auto Repair & Services',
+          description: 'Specialized landing page for auto care centers with instant WhatsApp booking, service menus, and integrated GPS routing.',
+          image_url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=1200&auto=format&fit=crop',
+          tech_stack: ['React', 'Vite', 'Google Maps', 'WhatsApp CAPI'],
+          niche_url: '/sites-para-oficinas',
+          live_url: '/sites-para-oficinas',
+          repo_url: '#'
+        },
+        {
           id: 'demo-1',
           title: 'SaaS Analytics Launch Page',
+          category: 'Startups & SaaS',
           description: 'High-performance landing page with interactive dashboard previews and sub-second load times.',
           image_url: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['React', 'Vite', 'Tailwind', 'Stripe'],
@@ -378,6 +408,7 @@ export const translations = {
         {
           id: 'demo-2',
           title: 'Fintech Global Checkout Funnel',
+          category: 'Fintech & Sales',
           description: 'Multi-currency direct sales landing page engineered for high-volume paid media campaigns.',
           image_url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['React', 'Node.js', 'Webhooks', 'Meta CAPI'],
@@ -387,6 +418,7 @@ export const translations = {
         {
           id: 'demo-3',
           title: 'Enterprise Cloud API Gateway',
+          category: 'Backend & Cloud',
           description: 'Developer hub and landing page showcasing backend architecture, documentation, and live sandbox.',
           image_url: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1200&auto=format&fit=crop',
           tech_stack: ['Node.js', 'PostgreSQL', 'Docker', 'AWS'],

@@ -591,6 +591,43 @@
   margin: 0;
 }
 
+/* Category Filters */
+.categoryFilterBar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-bottom: 3rem;
+}
+
+.categoryFilterBtn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: #a1a1aa;
+  padding: 0.5rem 1.1rem;
+  border-radius: 9999px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-family: inherit;
+}
+
+.categoryFilterBtn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f4f4f5;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.categoryFilterActive {
+  background: rgba(16, 185, 129, 0.15) !important;
+  color: #34d399 !important;
+  border-color: #10b981 !important;
+  font-weight: 600;
+  box-shadow: 0 0 15px rgba(16, 185, 129, 0.15);
+}
+
 /* Projects */
 .projectsGrid {
   display: grid;
@@ -668,6 +705,15 @@
   flex-grow: 1;
 }
 
+.projectCategoryTag {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #10b981;
+  margin-bottom: 0.5rem;
+}
+
 .projectStack {
   display: flex;
   flex-wrap: wrap;
@@ -727,6 +773,29 @@
 
 .projectLinkMain:hover {
   color: #34d399;
+}
+
+.projectLinkNiche {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  color: #34d399;
+  font-size: 0.88rem;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  padding: 0.4rem 0.85rem;
+  border-radius: 8px;
+  font-family: inherit;
+  transition: all 0.15s ease;
+}
+
+.projectLinkNiche:hover {
+  background: rgba(16, 185, 129, 0.22);
+  border-color: #10b981;
+  color: #a7f3d0;
+  transform: translateX(2px);
 }
 
 .projectLinkGhost {

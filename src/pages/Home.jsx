@@ -54,6 +54,7 @@ export default function Home() {
   const [profile, setProfile] = useState(null)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState('all')
 
   // Direct mailto link (opens default email app directly without modal)
   const mailtoUrl = useMemo(() => {
@@ -128,6 +129,21 @@ export default function Home() {
     }
     return t.projects.demoProjects || []
   }, [dbProjects, t.projects.demoProjects])
+
+  // Extract unique categories from projects
+  const projectCategories = useMemo(() => {
+    const set = new Set()
+    displayProjects.forEach(p => {
+      if (p.category) set.add(p.category)
+    })
+    return Array.from(set)
+  }, [displayProjects])
+
+  // Filtered projects by selected category
+  const filteredProjects = useMemo(() => {
+    if (selectedCategory === 'all') return displayProjects
+    return displayProjects.filter(p => p.category === selectedCategory)
+  }, [displayProjects, selectedCategory])
 
   const getServiceIcon = (id) => {
     switch (id) {
@@ -392,11 +408,34 @@ export default function Home() {
           <p className={styles.sectionSubtitle}>{t.projects.subtitle}</p>
         </div>
 
+        {/* Category Filter Tabs */}
+        {projectCategories.length > 0 && (
+          <div className={styles.categoryFilterBar}>
+            <button
+              type="button"
+              onClick={() => setSelectedCategory('all')}
+              className={`${styles.categoryFilterBtn} ${selectedCategory === 'all' ? styles.categoryFilterActive : ''}`}
+            >
+              {t.projects.filterAll || 'Todos'}
+            </button>
+            {projectCategories.map((cat) => (
+              <button
+                key={cat}
+                type="button"
+                onClick={() => setSelectedCategory(cat)}
+                className={`${styles.categoryFilterBtn} ${selectedCategory === cat ? styles.categoryFilterActive : ''}`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
+        )}
+
         <div className={styles.projectsGrid}>
-          {displayProjects.length === 0 ? (
+          {filteredProjects.length === 0 ? (
             <p className={styles.emptyState}>{t.projects.empty}</p>
           ) : (
-            displayProjects.map((proj) => (
+            filteredProjects.map((proj) => (
               <div key={proj.id} className={styles.projectCard}>
                 <div className={styles.projectThumbWrapper}>
                   <img 
@@ -406,7 +445,14 @@ export default function Home() {
                     loading="lazy"
                   />
                   <div className={styles.projectOverlay}>
-                    {proj.live_url && proj.live_url !== '#' && (
+                    {proj.niche_url ? (
+                      <Link 
+                        to={proj.niche_url}
+                        className={styles.overlayBtn}
+                      >
+                        <ExternalLink size={16} /> {t.projects.viewPresentation || 'Ver Apresentação'}
+                      </Link>
+                    ) : proj.live_url && proj.live_url !== '#' ? (
                       <a 
                         href={proj.live_url} 
                         target="_blank" 
@@ -415,11 +461,18 @@ export default function Home() {
                       >
                         <ExternalLink size={16} /> {t.projects.viewLive}
                       </a>
-                    )}
+                    ) : null}
                   </div>
                 </div>
 
                 <div className={styles.projectBody}>
+                  {/* Category Badge */}
+                  {proj.category && (
+                    <div className={styles.projectCategoryTag}>
+                      {proj.category}
+                    </div>
+                  )}
+
                   <div className={styles.projectStack}>
                     {proj.tech_stack?.map((tech, i) => (
                       <span key={i} className={styles.techPill}>{tech}</span>
@@ -430,7 +483,15 @@ export default function Home() {
                   <p className={styles.projectDesc}>{proj.description}</p>
 
                   <div className={styles.projectActions}>
-                    {proj.live_url && proj.live_url !== '#' ? (
+                    {proj.niche_url ? (
+                      <Link 
+                        to={proj.niche_url}
+                        className={styles.projectLinkNiche}
+                      >
+                        <span>{t.projects.viewPresentation || 'Ver Apresentação'}</span>
+                        <ArrowRight size={14} />
+                      </Link>
+                    ) : proj.live_url && proj.live_url !== '#' ? (
                       <a 
                         href={proj.live_url} 
                         target="_blank" 

@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home.jsx'
 import Briefing from './pages/Briefing.jsx'
+import NicheLanding from './pages/NicheLanding.jsx'
 import Login from './pages/Login.jsx'
 import Dashboard from './pages/Dashboard.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
@@ -18,6 +19,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         <Route element={<ProtectedRoute />}>
           <Route path="/admin" element={<Dashboard />} />
         </Route>
+
+        {/* Specialized Niche Landing Pages */}
+        <Route path="/sites-para-oficinas" element={<NicheLanding nicheSlug="sites-para-oficinas" />} />
+        <Route path="/pt/sites-para-oficinas" element={<NicheLanding nicheSlug="sites-para-oficinas" />} />
+        <Route path="/en/sites-para-oficinas" element={<NicheLanding nicheSlug="sites-para-oficinas" />} />
+        <Route path="/solucoes/:slug" element={<NicheLanding />} />
+        <Route path="/:lang/solucoes/:slug" element={<NicheLanding />} />
 
         {/* Briefing routes */}
         <Route path="/briefing" element={<Briefing />} />
