@@ -221,3 +221,32 @@
     grid-template-columns: 1fr;
   }
 }
+
+
+.categorySelect {
+  background-color: #0f172a;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  color: #fff;
+  font-family: inherit;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.categorySelect:focus {
+  outline: none;
+  border-color: #10b981;
+}
+
+.categorySelect option {
+  background-color: #1e293b;
+  color: #fff;
+}
+
+.customCatInput {
+  margin-top: 0.5rem;
+  border-color: #10b981 !important;
+  background-color: rgba(16, 185, 129, 0.05) !important;
+}

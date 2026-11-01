@@ -9,4 +9,3 @@ export const CONTACT_CONFIG = {
   // Optional Web3Forms public access key (if preferred over FormSubmit)
   web3FormsKey: import.meta.env.VITE_WEB3FORMS_KEY || '',
 }
-

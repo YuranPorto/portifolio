@@ -97,11 +97,23 @@ export default function Home() {
 
   async function fetchData() {
     try {
-      // Fetch Projects from Supabase
-      const { data: projectsData, error: projectsError } = await supabase
+      // Fetch Projects from Supabase in the exact order they were added
+      let { data: projectsData, error: projectsError } = await supabase
         .from('projects')
         .select('*')
-        .order('display_order', { ascending: true })
+        .order('created_at', { ascending: false })
+      
+      // Fallback to display_order if created_at is unavailable
+      if (projectsError) {
+        const fallback = await supabase
+          .from('projects')
+          .select('*')
+          .order('display_order', { ascending: true })
+        if (!fallback.error) {
+          projectsData = fallback.data
+          projectsError = null
+        }
+      }
       
       if (!projectsError && projectsData && projectsData.length > 0) {
         setDbProjects(projectsData)

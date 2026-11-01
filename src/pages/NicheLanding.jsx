@@ -1,8 +1,10 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import styles from './NicheLanding.module.css'
-import { nicheLandingPages } from '../data/nicheLandingPages'
+import { nicheLandingPages as defaultNichePages } from '../data/nicheLandingPages'
+import { getNichePageBySlug } from '../services/pagesService'
 import { CONTACT_CONFIG } from '../config/contact'
+import { supabase } from '../services/supabase'
 import { 
   ArrowLeft, 
   MessageCircle, 
@@ -21,8 +23,7 @@ import {
   Star,
   ChevronDown,
   Layers,
-  PhoneCall,
-  Flame,
+  FolderGit2,
   Check
 } from 'lucide-react'
 
@@ -43,11 +44,69 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
     return 'pt'
   }, [paramLang, location.pathname])
 
-  const nicheData = nicheLandingPages[activeSlug] || nicheLandingPages['sites-para-oficinas']
-  const content = nicheData[currentLang] || nicheData.pt
-
+  const [dynamicPage, setDynamicPage] = useState(null)
+  const [dbProjects, setDbProjects] = useState([])
   const [activeFaq, setActiveFaq] = useState(null)
   const [demoSelectedService, setDemoSelectedService] = useState(0)
+
+  useEffect(() => {
+    async function loadPage() {
+      const page = await getNichePageBySlug(activeSlug)
+      if (page) {
+        setDynamicPage(page)
+      }
+    }
+    loadPage()
+  }, [activeSlug])
+
+  const nicheData = dynamicPage || defaultNichePages[activeSlug] || defaultNichePages['sites-para-oficinas']
+  const content = nicheData ? (nicheData[currentLang] || nicheData.pt) : null
+
+  // Fetch projects from Supabase matching this category
+  useEffect(() => {
+    async function loadCategoryProjects() {
+      try {
+        const { data, error } = await supabase
+          .from('projects')
+          .select('*')
+          .order('created_at', { ascending: false })
+
+        if (!error && data && data.length > 0) {
+          const categoryKeywords = ['oficina', 'automotiv', 'mecanic', 'car', 'auto', activeSlug.replace('sites-para-', '')]
+          const matched = data.filter(p => {
+            const cat = (p.category || '').toLowerCase()
+            const title = (p.title || '').toLowerCase()
+            const desc = (p.description || '').toLowerCase()
+            return categoryKeywords.some(kw => cat.includes(kw) || title.includes(kw) || desc.includes(kw))
+          })
+          setDbProjects(matched)
+        }
+      } catch (err) {
+        console.warn('Could not query category projects:', err)
+      }
+    }
+    loadCategoryProjects()
+  }, [activeSlug])
+
+  // Merge database projects with template demonstrations for this niche
+  const displayedCategoryProjects = useMemo(() => {
+    const defaultItems = content?.categoryProjects?.items || []
+    if (dbProjects.length > 0) {
+      return [
+        ...dbProjects.map(db => ({
+          id: db.id,
+          title: db.title,
+          category: db.category || (currentLang === 'en' ? 'Automotive' : 'Oficinas & Automotivo'),
+          description: db.description,
+          image_url: db.image_url,
+          tech_stack: db.tech_stack || ['React', 'Vite', 'WhatsApp'],
+          live_url: db.live_url || '#demo'
+        })),
+        ...defaultItems.filter(item => !dbProjects.some(db => db.title.toLowerCase() === item.title.toLowerCase()))
+      ]
+    }
+    return defaultItems
+  }, [dbProjects, content?.categoryProjects?.items, currentLang])
 
   // Language switcher preserving current niche
   const handleLanguageChange = (newLang) => {
@@ -58,15 +117,17 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
   // WhatsApp click handler with pre-formatted message
   const whatsappUrl = useMemo(() => {
     const cleanNumber = CONTACT_CONFIG.whatsappNumber.replace(/\D/g, '')
-    const msg = content.ctaBanner.whatsappMsg || 'Olá Yuran! Gostaria de um orçamento para o site da minha oficina mecânica.'
+    const msg = content?.ctaBanner?.whatsappMsg || 'Olá Yuran! Gostaria de um orçamento para o site da minha oficina mecânica.'
     return `https://wa.me/${cleanNumber}?text=${encodeURIComponent(msg)}`
-  }, [content.ctaBanner.whatsappMsg])
+  }, [content?.ctaBanner?.whatsappMsg])
 
   // Update document title and meta
   useEffect(() => {
-    document.title = content.metaTitle || 'Sites para Oficinas Mecânicas | Yuran Porto'
+    if (content?.metaTitle) {
+      document.title = content.metaTitle
+    }
     window.scrollTo({ top: 0, behavior: 'instant' })
-  }, [content.metaTitle])
+  }, [content?.metaTitle])
 
   // Icon mapper for services
   const renderServiceIcon = (iconName) => {
@@ -80,6 +141,8 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
       default: return <Wrench size={22} />
     }
   }
+
+  if (!content) return null
 
   return (
     <div className={styles.container}>
@@ -163,7 +226,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
 
           {/* Metrics Bar */}
           <div className={styles.metricsGrid}>
-            {content.metrics.map((metric, i) => (
+            {content.metrics?.map((metric, i) => (
               <div key={i} className={styles.metricCard}>
                 <span className={styles.metricVal}>{metric.value}</span>
                 <span className={styles.metricDesc}>{metric.label}</span>
@@ -251,7 +314,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
 
             {/* Mockup Trust Highlights */}
             <div className={styles.mockupTrustBar}>
-              {content.demo.trustPills.map((pill, idx) => (
+              {content.demo.trustPills?.map((pill, idx) => (
                 <div key={idx} className={styles.trustItem}>
                   <CheckCircle2 size={16} className={styles.trustCheck} />
                   <span>{pill}</span>
@@ -267,7 +330,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
               </div>
 
               <div className={styles.mockupServicesGrid}>
-                {content.demo.services.map((srv, index) => (
+                {content.demo.services?.map((srv, index) => (
                   <div 
                     key={index} 
                     className={`${styles.mockupServiceCard} ${demoSelectedService === index ? styles.mockupServiceActive : ''}`}
@@ -310,6 +373,72 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
         </div>
       </section>
 
+      {/* Projects Connected to This Category */}
+      {displayedCategoryProjects.length > 0 && (
+        <section className={styles.categoryProjectsSection}>
+          <div className={styles.sectionHeader}>
+            <span className={styles.sectionTag}>
+              {content.categoryProjects?.tag || (currentLang === 'en' ? 'CATEGORY SHOWCASE' : 'CASES DESTA CATEGORIA')}
+            </span>
+            <h2 className={styles.sectionTitle}>
+              {content.categoryProjects?.title || (currentLang === 'en' ? 'Demonstrations & Projects in this Industry' : 'Projetos e Demonstrações Desta Categoria')}
+            </h2>
+            <p className={styles.sectionSubtitle}>
+              {content.categoryProjects?.subtitle || (currentLang === 'en' ? 'Selected web applications and landing pages engineered for this market.' : 'Modelos e apresentações de alta conversão desenvolvidos sob medida para este segmento.')}
+            </p>
+          </div>
+
+          <div className={styles.categoryProjectsGrid}>
+            {displayedCategoryProjects.map((proj, idx) => (
+              <div key={proj.id || idx} className={styles.categoryProjectCard}>
+                <div className={styles.catProjectThumb}>
+                  <img 
+                    src={proj.image_url || 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=800&auto=format&fit=crop'} 
+                    alt={proj.title} 
+                    loading="lazy"
+                  />
+                  <div className={styles.catProjectOverlay}>
+                    <a 
+                      href={proj.live_url || '#demo'} 
+                      target={proj.live_url?.startsWith('#') ? '_self' : '_blank'}
+                      rel="noreferrer" 
+                      className={styles.catOverlayBtn}
+                    >
+                      <ExternalLink size={15} />
+                      <span>{content.categoryProjects?.viewLive || (currentLang === 'en' ? 'View Demo' : 'Ver Demonstração')}</span>
+                    </a>
+                  </div>
+                </div>
+
+                <div className={styles.catProjectBody}>
+                  <span className={styles.catProjectBadge}>{proj.category || 'Oficinas & Automotivo'}</span>
+                  <div className={styles.catProjectStack}>
+                    {proj.tech_stack?.map((tech, tIdx) => (
+                      <span key={tIdx} className={styles.catTechPill}>{tech}</span>
+                    ))}
+                  </div>
+
+                  <h3 className={styles.catProjectTitle}>{proj.title}</h3>
+                  <p className={styles.catProjectDesc}>{proj.description || proj.desc}</p>
+
+                  <div className={styles.catProjectFooter}>
+                    <a 
+                      href={proj.live_url || '#demo'}
+                      target={proj.live_url?.startsWith('#') ? '_self' : '_blank'}
+                      rel="noreferrer"
+                      className={styles.catProjectLink}
+                    >
+                      <span>{content.categoryProjects?.viewLive || (currentLang === 'en' ? 'View Demo' : 'Ver Demonstração')}</span>
+                      <ArrowRight size={14} />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* Benefits Section */}
       <section className={styles.benefitsSection}>
         <div className={styles.sectionHeader}>
@@ -319,7 +448,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
         </div>
 
         <div className={styles.benefitsGrid}>
-          {content.benefits.cards.map((b, i) => (
+          {content.benefits.cards?.map((b, i) => (
             <div key={i} className={styles.benefitCard}>
               <div className={styles.benefitIconBox}>
                 {i === 0 && <ShieldCheck size={24} />}
@@ -343,7 +472,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
         </div>
 
         <div className={styles.includedGrid}>
-          {content.whatsIncluded.items.map((item, idx) => (
+          {content.whatsIncluded.items?.map((item, idx) => (
             <div key={idx} className={styles.includedCard}>
               <div className={styles.includedHeader}>
                 <div className={styles.includedCheckIcon}>
@@ -366,7 +495,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
         </div>
 
         <div className={styles.processGrid}>
-          {content.process.steps.map((step, idx) => (
+          {content.process.steps?.map((step, idx) => (
             <div key={idx} className={styles.processCard}>
               <div className={styles.stepBadge}>{step.number}</div>
               <h3 className={styles.stepTitle}>{step.title}</h3>
@@ -384,7 +513,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
         </div>
 
         <div className={styles.faqList}>
-          {content.faq.items.map((item, idx) => (
+          {content.faq.items?.map((item, idx) => (
             <div 
               key={idx} 
               className={`${styles.faqItem} ${activeFaq === idx ? styles.faqActive : ''}`}
@@ -451,4 +580,3 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
     </div>
   )
 }
-

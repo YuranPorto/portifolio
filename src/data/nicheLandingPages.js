@@ -64,6 +64,41 @@ export const nicheLandingPages = {
           'Sala de espera climatizada com Wi-Fi'
         ]
       },
+      categoryProjects: {
+        tag: 'CASES & MODELOS DO SETOR',
+        title: 'Demonstrações e Projetos para o Setor Automotivo',
+        subtitle: 'Projetos reais e apresentações de alta performance desenvolvidas com foco no mercado de mecânicas e centros automotivos.',
+        viewLive: 'Ver Demonstração',
+        items: [
+          {
+            id: 'auto-case-1',
+            title: 'AutoTech Centro Automotivo & Diagnóstico',
+            category: 'Oficinas & Automotivo',
+            description: 'Site institucional com agendamento de revisão preventiva, mapa interativo Waze/Google e catálogo de serviços mecânicos.',
+            image_url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['React', 'Vite', 'Google Maps', 'WhatsApp CAPI'],
+            live_url: '#demo'
+          },
+          {
+            id: 'auto-case-2',
+            title: 'DetailPro Estética & Proteção Automotiva',
+            category: 'Oficinas & Automotivo',
+            description: 'Landing page para serviços de alto ticket como vitrificação cerâmica, polimento técnico e PPF com galeria interativa.',
+            image_url: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['React', 'Tailwind', 'Carousels', 'WhatsApp Direct'],
+            live_url: '#demo'
+          },
+          {
+            id: 'auto-case-3',
+            title: 'Express Lub & Mecânica Rápida',
+            category: 'Oficinas & Automotivo',
+            description: 'Página ágil para serviços expressos de troca de óleo, baterias e pastilhas de freio com botão de emergência rápida.',
+            image_url: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['Vite', 'SEO Local', 'Click-to-Call'],
+            live_url: '#demo'
+          }
+        ]
+      },
       benefits: {
         tag: 'POR QUE INVESTIR?',
         title: 'Os benefícios reais de uma apresentação profissional para sua oficina',
@@ -250,6 +285,41 @@ export const nicheLandingPages = {
           'Comfortable Waiting Lounge with Free Wi-Fi'
         ]
       },
+      categoryProjects: {
+        tag: 'INDUSTRY BENCHMARKS',
+        title: 'Projects & Demonstrations for the Automotive Industry',
+        subtitle: 'Real projects and high-performance presentations developed specifically for garages and auto centers.',
+        viewLive: 'View Demo',
+        items: [
+          {
+            id: 'auto-case-1',
+            title: 'Apex Auto Care & Diagnostics',
+            category: 'Auto Repair & Services',
+            description: 'Full-service auto repair landing page featuring appointment scheduling, interactive GPS map, and diagnostic service menu.',
+            image_url: 'https://images.unsplash.com/photo-1619642751034-765dfdf7c58e?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['React', 'Vite', 'Google Maps', 'WhatsApp CAPI'],
+            live_url: '#demo'
+          },
+          {
+            id: 'auto-case-2',
+            title: 'Precision Car Detailing & Paint Protection',
+            category: 'Auto Repair & Services',
+            description: 'High-ticket sales landing page for ceramic coating, paint correction, and PPF with before/after showcase.',
+            image_url: 'https://images.unsplash.com/photo-1601362840469-51e4d8d58785?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['React', 'Tailwind', 'Carousels', 'WhatsApp Direct'],
+            live_url: '#demo'
+          },
+          {
+            id: 'auto-case-3',
+            title: 'Quick Lube & Rapid Maintenance',
+            category: 'Auto Repair & Services',
+            description: 'Rapid turnaround landing page for fluid flushes, brake services, and batteries with click-to-call emergency button.',
+            image_url: 'https://images.unsplash.com/photo-1486006920555-c77dce18193b?q=80&w=800&auto=format&fit=crop',
+            tech_stack: ['Vite', 'Local SEO', 'Click-to-Call'],
+            live_url: '#demo'
+          }
+        ]
+      },
       benefits: {
         tag: 'WHY IT MATTERS',
         title: 'The real return of a professional web presence for your garage',
@@ -374,4 +444,3 @@ export const nicheLandingPages = {
     }
   }
 }
-
