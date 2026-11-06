@@ -1,0 +1,73 @@
+.heroBgContainer {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 0;
+  background-color: #09090b;
+}
+
+/* Fallback static poster/glow layer (instant render, zero delay) */
+.staticPoster {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 50% 25%, rgba(16, 185, 129, 0.08) 0%, transparent 60%),
+    radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.04) 0%, transparent 50%),
+    #09090b;
+  z-index: 1;
+}
+
+/* The video element with smooth fade-in once loaded */
+.videoElement {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  z-index: 2;
+  transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+  filter: contrast(1.15) brightness(0.65);
+}
+
+.videoVisible {
+  opacity: 0.32;
+}
+
+/* Dark Editorial Overlays to ensure 100% text contrast and seamless bottom fade */
+.overlayShade {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: 
+    radial-gradient(circle at 50% 35%, rgba(9, 9, 11, 0.25) 0%, rgba(9, 9, 11, 0.8) 75%, #09090b 100%),
+    linear-gradient(180deg, rgba(9, 9, 11, 0.65) 0%, rgba(9, 9, 11, 0.1) 25%, rgba(9, 9, 11, 0.4) 85%, #09090b 100%);
+  pointer-events: none;
+}
+
+/* Subtle tech grid lines */
+.overlayGrid {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  background-image: 
+    linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(circle at 50% 40%, black 25%, transparent 75%);
+  -webkit-mask-image: radial-gradient(circle at 50% 40%, black 25%, transparent 75%);
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+  .videoVisible {
+    opacity: 0.25; /* Even softer on mobile for battery and readability */
+  }
+}
+

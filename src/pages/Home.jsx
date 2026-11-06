@@ -7,6 +7,7 @@ import { CONTACT_CONFIG } from '../config/contact'
 import SEO from '../components/SEO'
 import ScrollableTags from '../components/ScrollableTags'
 import ProjectDetailModal from '../components/ProjectDetailModal'
+import HeroBackgroundVideo from '../components/HeroBackgroundVideo'
 import { localizeProject, translateCategory } from '../utils/projectTranslator'
 import { 
   Github, 
@@ -351,8 +352,9 @@ export default function Home() {
         )}
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section with Deferred Lightweight Video Background */}
       <section className={styles.hero}>
+        <HeroBackgroundVideo />
         <div className={styles.heroGlow}></div>
         <div className={styles.heroContent}>
           <div className={styles.badgeWrapper}>
