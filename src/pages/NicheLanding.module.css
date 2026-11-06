@@ -1105,7 +1105,7 @@
 .catProjectThumb {
   position: relative;
   width: 100%;
-  height: 200px;
+  height: 165px;
   overflow: hidden;
   background: #1c1c21;
 }
@@ -1196,8 +1196,28 @@
   color: #a1a1aa;
   font-size: 0.88rem;
   line-height: 1.55;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-grow: 1;
+}
+
+.readMoreBtn {
+  background: transparent;
+  border: none;
+  color: #10b981;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.35rem;
+  display: inline;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+
+.readMoreBtn:hover {
+  color: #34d399;
 }
 
 .catProjectFooter {

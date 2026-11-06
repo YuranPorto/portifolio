@@ -6,6 +6,8 @@ import { getNichePageBySlug } from '../services/pagesService'
 import { CONTACT_CONFIG } from '../config/contact'
 import { supabase } from '../services/supabase'
 import SEO from '../components/SEO'
+import ScrollableTags from '../components/ScrollableTags'
+import ProjectDetailModal from '../components/ProjectDetailModal'
 import { 
   ArrowLeft, 
   MessageCircle, 
@@ -49,6 +51,7 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
   const [dbProjects, setDbProjects] = useState([])
   const [activeFaq, setActiveFaq] = useState(null)
   const [demoSelectedService, setDemoSelectedService] = useState(0)
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState(null)
 
   useEffect(() => {
     async function loadPage() {
@@ -444,14 +447,32 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
 
                 <div className={styles.catProjectBody}>
                   <span className={styles.catProjectBadge}>{proj.category || 'Oficinas & Automotivo'}</span>
-                  <div className={styles.catProjectStack}>
-                    {proj.tech_stack?.map((tech, tIdx) => (
-                      <span key={tIdx} className={styles.catTechPill}>{tech}</span>
-                    ))}
-                  </div>
+                  
+                  {/* Scrollable draggable tags */}
+                  <ScrollableTags tags={proj.tech_stack} />
 
                   <h3 className={styles.catProjectTitle}>{proj.title}</h3>
-                  <p className={styles.catProjectDesc}>{proj.description || proj.desc}</p>
+
+                  {(() => {
+                    const desc = proj.description || proj.desc || ''
+                    const isLong = desc.length > 210
+                    const displayDesc = isLong ? desc.slice(0, 210).trim() + '...' : desc
+
+                    return (
+                      <p className={styles.catProjectDesc}>
+                        {displayDesc}
+                        {isLong && (
+                          <button 
+                            type="button" 
+                            onClick={() => setSelectedProjectDetail(proj)} 
+                            className={styles.readMoreBtn}
+                          >
+                            {currentLang === 'en' ? 'Read more' : 'Ver mais'}
+                          </button>
+                        )}
+                      </p>
+                    )
+                  })()}
 
                   <div className={styles.catProjectFooter}>
                     <a 
@@ -609,6 +630,16 @@ export default function NicheLanding({ nicheSlug = 'sites-para-oficinas' }) {
           </p>
         </div>
       </footer>
+
+      {/* Project Detail Modal */}
+      {selectedProjectDetail && (
+        <ProjectDetailModal 
+          project={selectedProjectDetail} 
+          onClose={() => setSelectedProjectDetail(null)}
+          currentLang={currentLang}
+          briefingPath={currentLang === 'en' ? '/en/briefing' : '/pt/briefing'}
+        />
+      )}
     </div>
   )
 }

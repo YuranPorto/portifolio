@@ -28,6 +28,7 @@ create table projects (
   id uuid default uuid_generate_v4() primary key,
   user_id uuid references auth.users on delete cascade not null,
   title text not null,
+  category text default 'Geral',
   description text,
   image_url text,
   tech_stack text[],
@@ -52,6 +53,10 @@ create policy "Users can update own projects." on projects
 
 create policy "Users can delete own projects." on projects
   for delete using (auth.uid() = user_id);
+
+-- Migration command if the table already exists:
+-- ALTER TABLE projects ADD COLUMN IF NOT EXISTS category text DEFAULT 'Geral';
+-- NOTIFY pgrst, 'reload schema';
 
 -- Create a storage bucket for 'portfolio-assets'
 insert into storage.buckets (id, name, public) 

@@ -103,8 +103,8 @@ export default function ProjectModal({ project, onClose, onSave }) {
     if (!imageFile) return formData.image_url
 
     const fileExt = imageFile.name.split('.').pop()
-    const fileName = `project-${Math.random()}.${fileExt}`
-    const filePath = `${fileName}`
+    const fileName = `${Math.random()}.${fileExt}`
+    const filePath = `projects/${fileName}`
 
     const { error: uploadError } = await supabase.storage
       .from('portfolio-assets')
@@ -155,6 +155,34 @@ export default function ProjectModal({ project, onClose, onSave }) {
           .from('projects')
           .insert([projectData])
         error = insertError
+      }
+
+      // Check if error is due to missing 'category' column in Supabase schema cache
+      if (error && (error.message?.includes("'category'") || error.message?.includes('category'))) {
+        console.warn('Column category not found in Supabase schema cache. Retrying without category property as fallback...')
+        const { category, ...dataWithoutCategory } = projectData
+        
+        let retryError
+        if (project?.id) {
+          const { error: rError } = await supabase
+            .from('projects')
+            .update(dataWithoutCategory)
+            .eq('id', project.id)
+          retryError = rError
+        } else {
+          const { error: rError } = await supabase
+            .from('projects')
+            .insert([dataWithoutCategory])
+          retryError = rError
+        }
+
+        if (!retryError) {
+          alert("Projeto salvo com sucesso!\n\nNota: A coluna 'category' ainda não existe no seu banco Supabase. Para que as categorias sejam salvas, execute no SQL Editor do Supabase:\n\nALTER TABLE projects ADD COLUMN IF NOT EXISTS category text DEFAULT 'Geral';")
+          onSave()
+          onClose()
+          return
+        }
+        error = retryError
       }
 
       if (error) throw error

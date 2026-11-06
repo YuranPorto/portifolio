@@ -1,10 +1,13 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 import { useParams, useNavigate, useLocation, Link } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import styles from './Home.module.css'
 import { translations } from '../data/translations'
 import { CONTACT_CONFIG } from '../config/contact'
 import SEO from '../components/SEO'
+import ScrollableTags from '../components/ScrollableTags'
+import ProjectDetailModal from '../components/ProjectDetailModal'
+import { localizeProject, translateCategory } from '../utils/projectTranslator'
 import { 
   Github, 
   Linkedin, 
@@ -56,6 +59,58 @@ export default function Home() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState('all')
+  const [selectedProjectDetail, setSelectedProjectDetail] = useState(null)
+
+  // Category filter bar mouse drag-to-scroll support
+  const categoryBarRef = useRef(null)
+  const [isDraggingCategory, setIsDraggingCategory] = useState(false)
+  const categoryDragInfo = useRef({
+    isDown: false,
+    startX: 0,
+    scrollLeft: 0,
+    hasMoved: false
+  })
+
+  const handleCategoryMouseDown = (e) => {
+    if (e.button !== 0) return
+    const slider = categoryBarRef.current
+    if (!slider) return
+
+    categoryDragInfo.current.isDown = true
+    categoryDragInfo.current.hasMoved = false
+    categoryDragInfo.current.startX = e.pageX - slider.offsetLeft
+    categoryDragInfo.current.scrollLeft = slider.scrollLeft
+    setIsDraggingCategory(true)
+  }
+
+  const handleCategoryMouseLeave = () => {
+    categoryDragInfo.current.isDown = false
+    setIsDraggingCategory(false)
+  }
+
+  const handleCategoryMouseUp = () => {
+    categoryDragInfo.current.isDown = false
+    setIsDraggingCategory(false)
+  }
+
+  const handleCategoryMouseMove = (e) => {
+    if (!categoryDragInfo.current.isDown) return
+    const slider = categoryBarRef.current
+    if (!slider) return
+
+    e.preventDefault()
+    const x = e.pageX - slider.offsetLeft
+    const walk = (x - categoryDragInfo.current.startX) * 1.5
+    if (Math.abs(walk) > 4) {
+      categoryDragInfo.current.hasMoved = true
+    }
+    slider.scrollLeft = categoryDragInfo.current.scrollLeft - walk
+  }
+
+  const handleCategoryClick = (cat) => {
+    if (categoryDragInfo.current.hasMoved) return
+    setSelectedCategory(cat)
+  }
 
   // Direct mailto link (opens default email app directly without modal)
   const mailtoUrl = useMemo(() => {
@@ -135,15 +190,15 @@ export default function Home() {
     }
   }
 
-  // Projects to display: database projects if available, otherwise localized demo projects
+  // Projects to display: database projects if available, otherwise localized demo projects.
+  // Categories and descriptions automatically translated to English on /en.
+  // Title and tech tags remain intact.
   const displayProjects = useMemo(() => {
-    if (dbProjects.length > 0) {
-      return dbProjects
-    }
-    return t.projects.demoProjects || []
-  }, [dbProjects, t.projects.demoProjects])
+    const raw = dbProjects.length > 0 ? dbProjects : (t.projects.demoProjects || [])
+    return raw.map(p => localizeProject(p, currentLang))
+  }, [dbProjects, t.projects.demoProjects, currentLang])
 
-  // Extract unique categories from projects
+  // Extract unique categories from projects (already localized)
   const projectCategories = useMemo(() => {
     const set = new Set()
     displayProjects.forEach(p => {
@@ -152,11 +207,12 @@ export default function Home() {
     return Array.from(set)
   }, [displayProjects])
 
-  // Filtered projects by selected category
+  // Filtered projects by selected category (resilient to language switch)
   const filteredProjects = useMemo(() => {
     if (selectedCategory === 'all') return displayProjects
-    return displayProjects.filter(p => p.category === selectedCategory)
-  }, [displayProjects, selectedCategory])
+    const targetCategory = translateCategory(selectedCategory, currentLang)
+    return displayProjects.filter(p => p.category === selectedCategory || p.category === targetCategory)
+  }, [displayProjects, selectedCategory, currentLang])
 
   const getServiceIcon = (id) => {
     switch (id) {
@@ -352,6 +408,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* Services Section */}
       <section id="services" className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -382,6 +440,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* Bento Grid Differentials */}
       <section id="differentials" className={`${styles.section} ${styles.differentialsSection}`}>
         <div className={styles.sectionHeader}>
@@ -409,6 +469,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* Process Section */}
       <section id="process" className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -428,6 +490,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* Projects Showcase */}
       <section id="projects" className={styles.section}>
         <div className={styles.sectionHeader}>
@@ -436,26 +500,35 @@ export default function Home() {
           <p className={styles.sectionSubtitle}>{t.projects.subtitle}</p>
         </div>
 
-        {/* Category Filter Tabs */}
+        {/* Category Filter Tabs with Horizontal Scroll & Mouse Drag */}
         {projectCategories.length > 0 && (
-          <div className={styles.categoryFilterBar}>
-            <button
-              type="button"
-              onClick={() => setSelectedCategory('all')}
-              className={`${styles.categoryFilterBtn} ${selectedCategory === 'all' ? styles.categoryFilterActive : ''}`}
+          <div className={styles.categoryFilterWrapper}>
+            <div 
+              ref={categoryBarRef}
+              className={`${styles.categoryFilterBar} ${isDraggingCategory ? styles.categoryFilterDragging : ''}`}
+              onMouseDown={handleCategoryMouseDown}
+              onMouseLeave={handleCategoryMouseLeave}
+              onMouseUp={handleCategoryMouseUp}
+              onMouseMove={handleCategoryMouseMove}
             >
-              {t.projects.filterAll || 'Todos'}
-            </button>
-            {projectCategories.map((cat) => (
               <button
-                key={cat}
                 type="button"
-                onClick={() => setSelectedCategory(cat)}
-                className={`${styles.categoryFilterBtn} ${selectedCategory === cat ? styles.categoryFilterActive : ''}`}
+                onClick={() => handleCategoryClick('all')}
+                className={`${styles.categoryFilterBtn} ${selectedCategory === 'all' ? styles.categoryFilterActive : ''}`}
               >
-                {cat}
+                {t.projects.filterAll || 'Todos'}
               </button>
-            ))}
+              {projectCategories.map((cat) => (
+                <button
+                  key={cat}
+                  type="button"
+                  onClick={() => handleCategoryClick(cat)}
+                  className={`${styles.categoryFilterBtn} ${selectedCategory === cat ? styles.categoryFilterActive : ''}`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
           </div>
         )}
 
@@ -501,14 +574,31 @@ export default function Home() {
                     </div>
                   )}
 
-                  <div className={styles.projectStack}>
-                    {proj.tech_stack?.map((tech, i) => (
-                      <span key={i} className={styles.techPill}>{tech}</span>
-                    ))}
-                  </div>
+                  {/* Scrollable draggable tags */}
+                  <ScrollableTags tags={proj.tech_stack} />
 
                   <h3 className={styles.projectTitle}>{proj.title}</h3>
-                  <p className={styles.projectDesc}>{proj.description}</p>
+                  
+                  {(() => {
+                    const desc = proj.description || ''
+                    const isLong = desc.length > 210
+                    const displayDesc = isLong ? desc.slice(0, 210).trim() + '...' : desc
+
+                    return (
+                      <p className={styles.projectDesc}>
+                        {displayDesc}
+                        {isLong && (
+                          <button 
+                            type="button" 
+                            onClick={() => setSelectedProjectDetail(proj)} 
+                            className={styles.readMoreBtn}
+                          >
+                            {currentLang === 'en' ? 'Read more' : 'Ver mais'}
+                          </button>
+                        )}
+                      </p>
+                    )
+                  })()}
 
                   <div className={styles.projectActions}>
                     {proj.niche_url ? (
@@ -558,6 +648,8 @@ export default function Home() {
         </div>
       </section>
 
+
+
       {/* About Me Section */}
       <section id="about" className={`${styles.section} ${styles.aboutSection}`}>
         <div className={styles.aboutGrid}>
@@ -594,6 +686,9 @@ const engineer = {
             <span className={styles.sectionTag}>{t.about.tag}</span>
             <h2 className={styles.aboutTitle}>{t.about.title}</h2>
             
+            {profile?.bio && (
+              <p className={styles.aboutParagraph}>{profile.bio}</p>
+            )}
             <p className={styles.aboutParagraph}>{t.about.p1}</p>
             <p className={styles.aboutParagraph}>{t.about.p2}</p>
 
@@ -636,6 +731,8 @@ const engineer = {
         </div>
       </section>
 
+
+
       {/* CTA Final Banner */}
       <section className={styles.ctaBannerSection}>
         <div className={styles.ctaBannerCard}>
@@ -666,6 +763,8 @@ const engineer = {
         </div>
       </section>
 
+
+
       {/* Footer */}
       <footer className={styles.footer}>
         <div className={styles.footerInner}>
@@ -687,6 +786,16 @@ const engineer = {
           </div>
         </div>
       </footer>
+
+      {/* Project Detail Modal */}
+      {selectedProjectDetail && (
+        <ProjectDetailModal 
+          project={selectedProjectDetail} 
+          onClose={() => setSelectedProjectDetail(null)}
+          currentLang={currentLang}
+          briefingPath={briefingPath}
+        />
+      )}
     </div>
   )
 }

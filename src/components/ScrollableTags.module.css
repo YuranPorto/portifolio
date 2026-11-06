@@ -1,0 +1,45 @@
+.tagContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: nowrap;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  padding: 2px 0;
+  margin-bottom: 0.75rem;
+}
+
+.tagContainer::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.tagContainer:active,
+.isDragging {
+  cursor: grabbing;
+}
+
+.tagPill {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 500;
+  color: #a1a1aa;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  padding: 0.18rem 0.5rem;
+  border-radius: 5px;
+  letter-spacing: 0.01em;
+  flex-shrink: 0;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.tagPill:hover {
+  background: rgba(255, 255, 255, 0.08);
+  color: #e4e4e7;
+}
+

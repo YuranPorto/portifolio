@@ -592,26 +592,59 @@
 }
 
 /* Category Filters */
+.categoryFilterWrapper {
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto 2.5rem;
+  display: flex;
+  justify-content: center;
+  position: relative;
+}
+
 .categoryFilterBar {
   display: flex;
   align-items: center;
-  justify-content: center;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-bottom: 3rem;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 0.5rem;
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+  padding: 0.35rem 0.5rem;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.categoryFilterBar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+.categoryFilterBar:active,
+.categoryFilterDragging {
+  cursor: grabbing;
 }
 
 .categoryFilterBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
   color: #a1a1aa;
-  padding: 0.5rem 1.1rem;
+  padding: 0.38rem 0.95rem;
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.78rem;
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: inherit;
+  white-space: nowrap;
+  flex-shrink: 0;
+  width: auto !important;
+  line-height: 1.2;
 }
 
 .categoryFilterBtn:hover {
@@ -654,7 +687,7 @@
 .projectThumbWrapper {
   position: relative;
   width: 100%;
-  height: 220px;
+  height: 165px;
   overflow: hidden;
   background: #1c1c21;
 }
@@ -741,10 +774,30 @@
 
 .projectDesc {
   color: #a1a1aa;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
   line-height: 1.55;
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   flex-grow: 1;
+}
+
+.readMoreBtn {
+  background: transparent;
+  border: none;
+  color: #10b981;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  margin-left: 0.35rem;
+  display: inline;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  font-family: inherit;
+  transition: color 0.15s ease;
+}
+
+.readMoreBtn:hover {
+  color: #34d399;
 }
 
 .projectActions {
@@ -1163,12 +1216,47 @@
 }
 
 @media (max-width: 768px) {
+  /* Navbar adjustments for mobile */
+  .navInner {
+    padding: 0.85rem 1.25rem;
+  }
+
+  .navActions {
+    gap: 0.6rem;
+  }
+
+  /* Ocultar switch de idioma da barra padrao (fica apenas dentro do menu apos aberto) */
+  .navActions .langSwitcher {
+    display: none !important;
+  }
+
+  /* Ocultar tag "Vagas para projetos" no mobile */
+  .statusPill {
+    display: none !important;
+  }
+
+  /* Posicionamento e respiro do menu mobile para nao ficar colado na borda */
   .desktopNav {
     display: none;
   }
 
   .mobileMenuToggle {
-    display: block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #f4f4f5;
+    padding: 0.55rem;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-right: 0.25rem;
+    transition: all 0.15s ease;
+  }
+
+  .mobileMenuToggle:hover,
+  .mobileMenuToggle:active {
+    background: rgba(255, 255, 255, 0.12);
   }
 
   .mobileMenu {
@@ -1197,6 +1285,19 @@
     font-size: 0.85rem;
   }
 
+  .mobileLangRow .langSwitcher {
+    display: inline-flex !important;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.2rem;
+  }
+
+  .mobileLangRow .langBtn {
+    font-size: 0.82rem;
+    padding: 0.35rem 0.65rem;
+  }
+
   .headline {
     font-size: 2.25rem;
   }
@@ -1223,6 +1324,92 @@
     grid-template-columns: 1fr;
   }
 
+  /* Secao Sobre Mim no Mobile - Totalmente responsiva sem cortes */
+  .section {
+    padding: 4.5rem 1.25rem;
+  }
+
+  .aboutSection {
+    padding-top: 3.5rem;
+    padding-bottom: 3.5rem;
+  }
+
+  .aboutGrid {
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .aboutVisual {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    gap: 1.25rem;
+  }
+
+  .aboutImageFrame {
+    max-height: 240px;
+    border-radius: 16px;
+  }
+
+  .terminalBox {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    border-radius: 12px;
+  }
+
+  .termCode {
+    font-size: 0.72rem;
+    padding: 0.75rem 0.85rem;
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-x: auto;
+  }
+
+  .aboutDetails {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+  }
+
+  .aboutTitle {
+    font-size: 1.65rem;
+    line-height: 1.25;
+    margin-bottom: 1.15rem;
+    word-break: break-word;
+  }
+
+  .aboutParagraph {
+    font-size: 0.95rem;
+    line-height: 1.65;
+    margin-bottom: 1rem;
+    word-break: break-word;
+  }
+
+  .aboutSkillsBlock {
+    margin: 1.25rem 0 1.5rem;
+    padding-top: 1.25rem;
+  }
+
+  .skillsTagCloud {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .skillItem {
+    font-size: 0.75rem;
+    padding: 0.35rem 0.65rem;
+  }
+
+  .socialRow {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.65rem;
+  }
+
   .ctaBannerTitle {
     font-size: 2rem;
   }
@@ -1230,5 +1417,11 @@
   .footerInner {
     flex-direction: column;
     align-items: flex-start;
+  }
+}
+
+@media (max-width: 580px) {
+  .navActions .ctaPrimaryBtn {
+    display: none;
   }
 }
